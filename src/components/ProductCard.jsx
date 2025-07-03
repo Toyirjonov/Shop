@@ -1,13 +1,146 @@
 import { NavLink } from "react-router-dom";
+import { FiHeart, FiShoppingCart, FiMinus, FiPlus } from "react-icons/fi";
+import { FaHeart } from "react-icons/fa";
+import { useState } from "react";
 
 function ProductCard({ product }) {
+  const [isLiked, setIsLiked] = useState(false);
+  const [showCounter, setShowCounter] = useState(false);
+  const [quantity, setQuantity] = useState(1);
+  const [cartQuantity, setCartQuantity] = useState(0);
+  const [isInCart, setIsInCart] = useState(false);
+
+  const toggleLike = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsLiked(!isLiked);
+  };
+
+  const handleAddToCart = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (!isInCart) {
+      setShowCounter(true);
+    } else {
+      setCartQuantity(cartQuantity + 1);
+      alert(`Yana 1 dona qo'shildi. Jami savatda: ${cartQuantity + 1}`);
+    }
+  };
+
+  const handleConfirmAddToCart = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    setCartQuantity(quantity);
+    setIsInCart(true);
+    setShowCounter(false);
+    setQuantity(1);
+
+    alert(`${product.title} savatga qo'shildi (${quantity} dona)`);
+  };
+
+  const increaseQuantity = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (quantity < product.stock) {
+      setQuantity(quantity + 1);
+    }
+  };
+
+  const decreaseQuantity = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (quantity > 1) {
+      setQuantity(quantity - 1);
+    }
+  };
+
+  const handleCartQuantityChange = (e, newQuantity) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (newQuantity <= 0) {
+      setCartQuantity(0);
+      setIsInCart(false);
+      alert("Mahsulot savatdan olib tashlandi");
+    } else {
+      setCartQuantity(newQuantity);
+      alert(`Miqdori ${newQuantity} ga o'zgartirildi`);
+    }
+  };
+
+  const discountedPrice =
+    product.price * (1 - product.discountPercentage / 100);
+
   return (
-    <div className="bg-white rounded-lg p-4 shadow hover:shadow-lg transition-shadow">
-      <NavLink
-        to={`/product/${product?.id}`}
-        className="block text-lg font-medium text-gray-800 hover:text-purple-600 transition-colors text-center"
-      >
-        {product?.title}
+    <div className="bg-white rounded-2xl shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden group">
+      <NavLink to={`/singleProduct/${product?.id}`} className="block">
+        <div className="relative bg-gray-50 aspect-square overflow-hidden">
+          <img
+            src={product?.thumbnail}
+            alt={product?.title}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+          />
+
+          <button
+            onClick={toggleLike}
+            className="absolute top-3 right-3 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-md hover:shadow-lg transition-all duration-200 z-10"
+          >
+            {isLiked ? (
+              <FaHeart className="text-red-500 text-sm" />
+            ) : (
+              <FiHeart className="text-gray-600 text-sm" />
+            )}
+          </button>
+
+          {product?.discountPercentage && product.discountPercentage > 0 && (
+            <div className="absolute top-3 left-3 bg-purple-600 text-white px-2 py-1 rounded-lg text-xs font-medium">
+              -{Math.round(product.discountPercentage)}%
+            </div>
+          )}
+        </div>
+
+        <div className="p-4">
+          <div className="flex items-center gap-2 mb-2">
+            <span className="text-lg font-bold text-purple-600">
+              {Math.round(discountedPrice)} so'm
+            </span>
+            {product?.discountPercentage && product.discountPercentage > 0 && (
+              <span className="text-sm text-gray-400 line-through">
+                {product.price} so'm
+              </span>
+            )}
+          </div>
+          <h3 className="text-sm text-gray-700 font-medium line-clamp-2 mb-3 leading-relaxed">
+            {product?.title}
+          </h3>
+          <div className="flex items-center gap-1 mb-3">
+            <div className="flex items-center">
+              {[1, 2, 3, 4, 5].map((star) => (
+                <span
+                  key={star}
+                  className={`text-xs ${
+                    star <= Math.round(product?.rating || 0)
+                      ? "text-yellow-400"
+                      : "text-gray-300"
+                  }`}
+                >
+                  ★
+                </span>
+              ))}
+            </div>
+            <span className="text-xs text-gray-500">
+              ({product?.rating || 0})
+            </span>
+          </div>
+          (
+          <button className="w-full bg-purple-600 hover:bg-purple-700 text-white py-2.5 px-4 rounded-xl text-sm font-medium transition-colors flex items-center justify-center gap-2">
+            <FiShoppingCart className="text-sm" />
+            Savatga qo'shish
+          </button>
+          )
+        </div>
       </NavLink>
     </div>
   );
