@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 function Navbar() {
   return (
     <div>
-      <ul className="menu menu-horizontal">
+      <ul className="flex flex-wrap gap-5 justify-center bg-black p-2">
         <li>
           <Link to="/">Home</Link>
         </li>

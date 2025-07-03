@@ -1,16 +1,26 @@
-import React from "react";
+import { Link } from "react-router-dom";
+import Product from "../components/Product";
+import { useFetch } from "../hooks/useFetch";
 
-const Home = () => {
-  return (
-    <>
-      <h1 className="text-3xl">Home</h1>
-      <p>
-        Lorem, ipsum dolor sit amet consectetur adipisicing elit. Fugit nulla a,
-        libero fugiat, eligendi iure, optio rerum voluptate sit dolor aliquid
-        deserunt unde nihil sed ab illo ratione commodi amet?
-      </p>
-    </>
+function Home() {
+  const { data: products, isPending } = useFetch(
+    "https://dummyjson.com/product"
   );
-};
+
+  
+    return (
+      <section>
+        <h1 className="text-3xl">Home</h1>
+        {products &&
+          products.products.map((p) => {
+            return (
+              <Link key={p.id} to={`singleProduct/${p.id}`}>
+                <Product product={p} />
+              </Link>
+            );
+          })}
+      </section>
+    );
+}
 
 export default Home;

@@ -5,6 +5,7 @@ import Home from "./pages/Home";
 import Contact from "./pages/Contact";
 
 import MainLayout from "./layout/MainLayout";
+import SingleProduct from "./pages/SingleProduct";
 
 function App() {
   const routes = createBrowserRouter([
@@ -23,6 +24,10 @@ function App() {
         {
           path: "/contact",
           element: <Contact />,
+        },
+        {
+          path: "/singleProduct/:id",
+          element: <SingleProduct />,
         },
       ],
     },
